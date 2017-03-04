@@ -11,7 +11,7 @@ Author:         Roman Leshchinskiy <rl@cse.unsw.edu.au>
 Maintainer:     Don Stewart <dons@galois.com>
 Copyright:      (c) 2006-2007 by Roman Leshchinskiy
 Homepage:       https://github.com/minad/strict
-Cabal-Version:  >= 1.2
+Cabal-Version:  >= 1.10
 Build-type:     Simple
 
 source-repository head
@@ -19,6 +19,7 @@ source-repository head
   location: https://github.com/minad/strict
 
 library
+  default-language:  Haskell2010
   hs-source-dirs:    src
   build-depends:     base < 5
   if impl(ghc < 8.0)
