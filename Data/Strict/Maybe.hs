@@ -1,9 +1,15 @@
+{-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE DeriveFoldable #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Strict.Maybe
 -- Copyright   :  (c) 2006-2007 Roman Leshchinskiy
 -- License     :  BSD-style (see the file LICENSE)
--- 
+--
 -- Maintainer  :  Roman Leshchinskiy <rl@cse.unsw.edu.au>
 -- Stability   :  experimental
 -- Portability :  portable
@@ -25,16 +31,34 @@ module Data.Strict.Maybe (
   , fromJust
   , fromMaybe
   , maybe
+  , listToMaybe
+  , maybeToList
+  , mapMaybe
+  , catMaybes
+  , toStrictMaybe
+  , toLazyMaybe
 ) where
 
-import Prelude hiding( Maybe(..), maybe )
+import qualified Data.Maybe as L
+import Prelude hiding (Maybe(..), maybe)
+import Data.Semigroup (Semigroup(..))
+import GHC.Generics (Generic, Generic1)
+import Data.Data (Data, Typeable)
 
 -- | The type of strict optional values.
-data Maybe a = Nothing | Just !a deriving(Eq, Ord, Show, Read)
+data Maybe a = Nothing | Just !a
+  deriving (Eq, Ord, Show, Read, Functor, Foldable, Traversable, Generic, Generic1, Data, Typeable)
 
-instance Functor Maybe where
-  fmap _ Nothing  = Nothing
-  fmap f (Just x) = Just (f x)
+instance Semigroup a => Semigroup (Maybe a) where
+  Nothing <> m       = m
+  m       <> Nothing = m
+  Just x1 <> Just x2 = Just (x1 <> x2)
+
+instance Monoid a => Monoid (Maybe a) where
+  mempty                    = Nothing
+  Nothing `mappend` m       = m
+  m       `mappend` Nothing = m
+  Just x1 `mappend` Just x2 = Just (x1 `mappend` x2)
 
 -- | Yields 'True' iff the argument is of the form @Just _@.
 isJust :: Maybe a -> Bool
@@ -66,3 +90,33 @@ maybe :: b -> (a -> b) -> Maybe a -> b
 maybe x _ Nothing  = x
 maybe _ f (Just y) = f y
 
+-- | Analogous to 'L.listToMaybe' in "Data.Maybe".
+listToMaybe :: [a] -> Maybe a
+listToMaybe []    = Nothing
+listToMaybe (a:_) = Just a
+
+-- | Analogous to 'L.maybeToList' in "Data.Maybe".
+maybeToList :: Maybe a -> [a]
+maybeToList Nothing  = []
+maybeToList (Just x) = [x]
+
+-- | Analogous to 'L.catMaybes' in "Data.Maybe".
+catMaybes :: [Maybe a] -> [a]
+catMaybes ls = [x | Just x <- ls]
+
+-- | Analogous to 'L.mapMaybe' in "Data.Maybe".
+mapMaybe :: (a -> Maybe b) -> [a] -> [b]
+mapMaybe _ []     = []
+mapMaybe f (x:xs) =
+  case f x of
+    Nothing -> rs
+    Just r  -> r:rs
+  where rs = mapMaybe f xs
+
+toStrictMaybe :: L.Maybe a -> Maybe a
+toStrictMaybe L.Nothing  = Nothing
+toStrictMaybe (L.Just x) = Just x
+
+toLazyMaybe :: Maybe a -> L.Maybe a
+toLazyMaybe Nothing  = L.Nothing
+toLazyMaybe (Just x) = L.Just x

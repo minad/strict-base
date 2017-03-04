@@ -18,15 +18,15 @@ Build-type:     Simple
 flag split-base
 
 library
-  if flag(split-base)
-    build-depends:     base >= 3, array
-  else
-    build-depends:     base < 3
+  build-depends:     base < 5
   exposed-modules:
         Data.Strict.Tuple
         Data.Strict.Maybe
         Data.Strict.Either
+        Data.Strict.List
+        Data.Strict.List.NonEmpty
         Data.Strict
-        System.IO.Strict
+  other-modules:
+        Data.Strict.Trustworthy
   ghc-options:    -Wall
   extensions:     CPP

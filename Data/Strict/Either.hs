@@ -1,9 +1,15 @@
+{-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE DeriveFoldable #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Strict.Either
 -- Copyright   :  (c) 2006-2007 Roman Leshchinskiy
 -- License     :  BSD-style (see the file LICENSE)
--- 
+--
 -- Maintainer  :  Roman Leshchinskiy <rl@cse.unsw.edu.au>
 -- Stability   :  experimental
 -- Portability :  portable
@@ -19,16 +25,27 @@ module Data.Strict.Either (
   , either
   , isLeft, isRight
   , fromLeft, fromRight
+  , lefts, rights
+  , partitionEithers
+  , toStrictEither
+  , toLazyEither
 ) where
 
-import Prelude hiding( Either(..), either )
+import qualified Data.Either as L
+import Prelude hiding (Either(..), either)
+import Data.Bifunctor (Bifunctor(..))
+import GHC.Generics (Generic, Generic1)
+import Data.Data (Data, Typeable)
 
 -- | The strict choice type.
-data Either a b = Left !a | Right !b deriving(Eq, Ord, Read, Show)
+data Either a b = Left !a | Right !b
+  deriving (Eq, Ord, Read, Show, Functor, Traversable, Foldable, Generic, Generic1, Data, Typeable)
 
-instance Functor (Either a) where
-  fmap _ (Left  x) = Left x
-  fmap f (Right y) = Right (f y)
+instance Bifunctor Either where
+  bimap f _ (Left a) = Left (f a)
+  bimap _ g (Right a) = Right (g a)
+  first f = either (Left . f) Right
+  second g = either Left (Right . g)
 
 -- | Case analysis: if the value is @'Left' a@, apply the first function to @a@;
 -- if it is @'Right' b@, apply the second function to @b@.
@@ -60,5 +77,24 @@ fromRight :: Either a b -> b
 fromRight (Right x) = x
 fromRight _         = error "Data.Strict.Either.fromRight: Left"
 
+-- | Analogous to 'L.lefts' in "Data.Either".
+lefts :: [Either a b] -> [a]
+lefts x = [a | Left a <- x]
 
+-- | Analogous to 'L.rights' in "Data.Either".
+rights :: [Either a b] -> [b]
+rights x = [a | Right a <- x]
 
+-- | Analogous to 'L.partitionEithers' in "Data.Either".
+partitionEithers :: [Either a b] -> ([a],[b])
+partitionEithers = foldr (either left right) ([], [])
+  where left  a ~(l, r) = (a:l, r)
+        right a ~(l, r) = (l, a:r)
+
+toStrictEither :: L.Either a b -> Either a b
+toStrictEither (L.Left x)  = Left x
+toStrictEither (L.Right y) = Right y
+
+toLazyEither :: Either a b -> L.Either a b
+toLazyEither (Left x)  = L.Left x
+toLazyEither (Right y) = L.Right y
