@@ -14,9 +14,16 @@ Homepage:       https://github.com/minad/strict
 Cabal-Version:  >= 1.2
 Build-type:     Simple
 
+source-repository head
+  type: git
+  location: https://github.com/minad/strict
+
 library
   hs-source-dirs:    src
   build-depends:     base < 5
+  if impl(ghc < 8.0)
+    build-depends:
+        semigroups >= 0.9 && < 1
   exposed-modules:
         Data.Strict.Tuple
         Data.Strict.Maybe
