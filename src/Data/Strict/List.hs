@@ -31,6 +31,8 @@ import GHC.Generics (Generic, Generic1)
 import Data.Data (Data, Typeable)
 import Data.Strict.Trustworthy
 
+infixr 5 :!
+
 -- | The strict list type.
 data List a = Nil | !a :! !(List a)
   deriving (Eq, Ord, Show, Read, Functor, Foldable, Traversable, Generic, Generic1, Data, Typeable)
