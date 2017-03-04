@@ -13,13 +13,15 @@
 -----------------------------------------------------------------------------
 
 module Data.Strict (
-    module Data.Strict.Tuple
+    module Data.Strict.Class
+  , module Data.Strict.Tuple
   , module Data.Strict.Maybe
   , module Data.Strict.Either
   , module Data.Strict.List
   , module Data.Strict.List.NonEmpty
 ) where
 
+import Data.Strict.Class
 import Data.Strict.Tuple
 import Data.Strict.Maybe
 import Data.Strict.Either

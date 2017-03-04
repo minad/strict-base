@@ -3,6 +3,7 @@
 {-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -26,8 +27,6 @@ module Data.Strict.Either (
   , isLeft, isRight
   , lefts, rights
   , partitionEithers
-  , toStrictEither
-  , toLazyEither
 ) where
 
 import qualified Data.Either as L
@@ -35,10 +34,17 @@ import Prelude hiding (Either(..), either)
 import Data.Bifunctor (Bifunctor(..))
 import GHC.Generics (Generic, Generic1)
 import Data.Data (Data, Typeable)
+import Data.Strict.Class
 
 -- | The strict choice type.
 data Either a b = Left !a | Right !b
   deriving (Eq, Ord, Read, Show, Functor, Traversable, Foldable, Generic, Generic1, Data, Typeable)
+
+instance IsStrict (L.Either a b) (Either a b) where
+  toStrict   (L.Left x)  = Left x
+  toStrict   (L.Right y) = Right y
+  fromStrict (Left x)    = L.Left x
+  fromStrict (Right y)   = L.Right y
 
 instance Bifunctor Either where
   bimap f _ (Left a) = Left (f a)
@@ -77,11 +83,3 @@ partitionEithers :: [Either a b] -> ([a],[b])
 partitionEithers = foldr (either left right) ([], [])
   where left  a ~(l, r) = (a:l, r)
         right a ~(l, r) = (l, a:r)
-
-toStrictEither :: L.Either a b -> Either a b
-toStrictEither (L.Left x)  = Left x
-toStrictEither (L.Right y) = Right y
-
-toLazyEither :: Either a b -> L.Either a b
-toLazyEither (Left x)  = L.Left x
-toLazyEither (Right y) = L.Right y

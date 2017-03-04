@@ -29,6 +29,7 @@ library
         Data.Strict.Tuple
         Data.Strict.Maybe
         Data.Strict.Either
+        Data.Strict.Class
         Data.Strict.List
         Data.Strict.List.NonEmpty
         Data.Strict

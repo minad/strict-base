@@ -3,6 +3,7 @@
 {-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -34,8 +35,6 @@ module Data.Strict.Maybe (
   , maybeToList
   , mapMaybe
   , catMaybes
-  , toStrictMaybe
-  , toLazyMaybe
 ) where
 
 import qualified Data.Maybe as L
@@ -43,10 +42,17 @@ import Prelude hiding (Maybe(..), maybe)
 import Data.Semigroup (Semigroup(..))
 import GHC.Generics (Generic, Generic1)
 import Data.Data (Data, Typeable)
+import Data.Strict.Class
 
 -- | The type of strict optional values.
 data Maybe a = Nothing | Just !a
   deriving (Eq, Ord, Show, Read, Functor, Foldable, Traversable, Generic, Generic1, Data, Typeable)
+
+instance IsStrict (L.Maybe a) (Maybe a) where
+  toStrict   L.Nothing  = Nothing
+  toStrict   (L.Just x) = Just x
+  fromStrict Nothing    = L.Nothing
+  fromStrict (Just x)   = L.Just x
 
 instance Semigroup a => Semigroup (Maybe a) where
   Nothing <> m       = m
@@ -105,11 +111,3 @@ mapMaybe f (x:xs) =
     Nothing -> rs
     Just r  -> r:rs
   where rs = mapMaybe f xs
-
-toStrictMaybe :: L.Maybe a -> Maybe a
-toStrictMaybe L.Nothing  = Nothing
-toStrictMaybe (L.Just x) = Just x
-
-toLazyMaybe :: Maybe a -> L.Maybe a
-toLazyMaybe Nothing  = L.Nothing
-toLazyMaybe (Just x) = L.Just x

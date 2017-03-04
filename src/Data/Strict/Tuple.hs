@@ -4,6 +4,7 @@
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -31,8 +32,6 @@ module Data.Strict.Tuple (
   , swap
   , zip
   , unzip
-  , toStrictPair
-  , toLazyPair
 ) where
 
 import Prelude hiding (fst, snd, curry, uncurry, zip, unzip)
@@ -41,6 +40,7 @@ import Data.Bifunctor (Bifunctor(..))
 import Data.Ix (Ix)
 import GHC.Generics (Generic, Generic1)
 import Data.Data (Data, Typeable)
+import Data.Strict.Class
 
 infixl 2 :!:
 
@@ -50,6 +50,10 @@ data Pair a b = !a :!: !b
 
 -- This gives a nicer syntax for the type but only works in GHC for now.
 type (:!:) = Pair
+
+instance IsStrict (a, b) (Pair a b) where
+  toStrict   (a, b)    = a :!: b
+  fromStrict (a :!: b) = (a, b)
 
 instance (Semigroup a, Semigroup b) => Semigroup (Pair a b) where
   (x1 :!: y1) <> (x2 :!: y2) = (x1 <> x2) :!: (y1 <> y2)
@@ -89,9 +93,3 @@ zip = zipWith (:!:)
 -- | Unzip for stict pairs into a (lazy) pair of lists.
 unzip :: [Pair a b] -> ([a], [b])
 unzip x = (map fst x, map snd x)
-
-toStrictPair :: (a, b) -> Pair a b
-toStrictPair (a, b) = a :!: b
-
-toLazyPair :: Pair a b -> (a, b)
-toLazyPair (a :!: b) = (a, b)

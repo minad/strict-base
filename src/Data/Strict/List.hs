@@ -4,6 +4,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -22,14 +23,13 @@
 -----------------------------------------------------------------------------
 
 module Data.Strict.List (
-    List(..)
-  , toStrictList
-  , toLazyList
+  List(..)
 ) where
 
 import GHC.Generics (Generic, Generic1)
 import Data.Data (Data, Typeable)
 import Data.Strict.Trustworthy
+import Data.Strict.Class
 
 infixr 5 :!
 
@@ -37,13 +37,11 @@ infixr 5 :!
 data List a = Nil | !a :! !(List a)
   deriving (Eq, Ord, Show, Read, Functor, Foldable, Traversable, Generic, Generic1, Data, Typeable)
 
+instance IsStrict [a] (List a) where
+  toStrict   = foldr (:!) Nil
+  fromStrict = foldr (:) []
+
 instance IsList (List a) where
   type Item (List a) = a
-  fromList = toStrictList
-  toList   = toLazyList
-
-toStrictList :: [a] -> List a
-toStrictList = foldr (:!) Nil
-
-toLazyList :: List a -> [a]
-toLazyList = foldr (:) []
+  fromList = toStrict
+  toList   = fromStrict

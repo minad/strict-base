@@ -4,6 +4,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -22,9 +23,7 @@
 -----------------------------------------------------------------------------
 
 module Data.Strict.List.NonEmpty (
-    NonEmpty(..)
-  , toStrictNonEmpty
-  , toLazyNonEmpty
+  NonEmpty(..)
 ) where
 
 import qualified Data.List.NonEmpty as L
@@ -32,6 +31,7 @@ import Data.Strict.List
 import GHC.Generics (Generic, Generic1)
 import Data.Data (Data, Typeable)
 import Data.Strict.Trustworthy
+import Data.Strict.Class
 
 infixr 5 :|
 
@@ -39,14 +39,12 @@ infixr 5 :|
 data NonEmpty a = !a :| !(List a)
   deriving (Eq, Ord, Show, Read, Functor, Foldable, Traversable, Generic, Generic1, Data, Typeable)
 
+instance IsStrict (L.NonEmpty a) (NonEmpty a) where
+  toStrict   (a L.:| as) = a   :| toStrict as
+  fromStrict (a   :| as) = a L.:| fromStrict as
+
 instance IsList (NonEmpty a) where
   type Item (NonEmpty a) = a
   fromList (a : as)  = a :| fromList as
   fromList []        = error "NonEmpty.fromList: empty list"
   toList  ~(a :| as) = a : toList as
-
-toStrictNonEmpty :: L.NonEmpty a -> NonEmpty a
-toStrictNonEmpty (a L.:| as) = a :| toStrictList as
-
-toLazyNonEmpty :: NonEmpty a -> L.NonEmpty a
-toLazyNonEmpty (a :| as) = a L.:| toLazyList as
