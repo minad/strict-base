@@ -28,7 +28,6 @@ module Data.Strict.Maybe (
     Maybe(..)
   , isJust
   , isNothing
-  , fromJust
   , fromMaybe
   , maybe
   , listToMaybe
@@ -69,12 +68,6 @@ isJust _       = True
 isNothing :: Maybe a -> Bool
 isNothing Nothing = True
 isNothing _       = False
-
--- | Extracts the element out of a 'Just' and throws an error if the argument
--- is 'Nothing'.
-fromJust :: Maybe a -> a
-fromJust Nothing  = error "Data.Strict.Maybe.fromJust: Nothing"
-fromJust (Just x) = x
 
 -- | Given a default value and a 'Maybe', yield the default value if the
 -- 'Maybe' argument is 'Nothing' and extract the value out of the 'Just'

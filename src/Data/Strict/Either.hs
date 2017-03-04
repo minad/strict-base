@@ -24,7 +24,6 @@ module Data.Strict.Either (
     Either(..)
   , either
   , isLeft, isRight
-  , fromLeft, fromRight
   , lefts, rights
   , partitionEithers
   , toStrictEither
@@ -64,18 +63,6 @@ isLeft _        = False
 isRight :: Either a b -> Bool
 isRight (Right _) = True
 isRight _         = False
-
--- | Extracts the element out of a 'Left' and throws an error if the argument
--- is a 'Right'.
-fromLeft :: Either a b -> a
-fromLeft (Left x) = x
-fromLeft _        = error "Data.Strict.Either.fromLeft: Right"
-
--- | Extracts the element out of a 'Right' and throws an error if the argument
--- is a 'Left'.
-fromRight :: Either a b -> b
-fromRight (Right x) = x
-fromRight _         = error "Data.Strict.Either.fromRight: Left"
 
 -- | Analogous to 'L.lefts' in "Data.Either".
 lefts :: [Either a b] -> [a]

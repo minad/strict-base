@@ -4,20 +4,18 @@ Synopsis:       Strict data types and String IO.
 Category:       Data, System
 Description:
         This package provides strict versions of some standard Haskell data
-        types (pairs, Maybe and Either). It also contains strict IO
-        operations.
+        types (Pairs, Maybe, Either, List and NonEmpty).
 License:        BSD3
 License-File:   LICENSE
 Author:         Roman Leshchinskiy <rl@cse.unsw.edu.au>
 Maintainer:     Don Stewart <dons@galois.com>
 Copyright:      (c) 2006-2007 by Roman Leshchinskiy
-Homepage:       http://www.cse.unsw.edu.au/~rl/code/strict.html
-Cabal-Version: >= 1.2
+Homepage:       https://github.com/minad/strict
+Cabal-Version:  >= 1.2
 Build-type:     Simple
 
-flag split-base
-
 library
+  hs-source-dirs:    src
   build-depends:     base < 5
   exposed-modules:
         Data.Strict.Tuple
@@ -29,4 +27,3 @@ library
   other-modules:
         Data.Strict.Trustworthy
   ghc-options:    -Wall
-  extensions:     CPP
