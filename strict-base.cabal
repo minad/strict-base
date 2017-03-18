@@ -12,6 +12,7 @@ Copyright:      (c) 2017 Daniel Mendler, 2006-2007 Roman Leshchinskiy
 Homepage:       https://github.com/minad/strict-base
 Cabal-Version:  >= 1.10
 Build-type:     Simple
+Tested-with:    GHC == 7.10.3, GHC == 8.0.1
 
 source-repository head
   type: git
@@ -21,7 +22,7 @@ library
   ghc-options:       -Wall
   default-language:  Haskell2010
   hs-source-dirs:    src
-  build-depends:     base < 5
+  build-depends:     base >= 4.8 && < 5.0
   if impl(ghc < 8.0)
     build-depends:
         semigroups >= 0.9 && < 1
