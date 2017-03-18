@@ -8,10 +8,10 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Strict.Maybe
--- Copyright   :  (c) 2006-2007 Roman Leshchinskiy
+-- Copyright   :  (c) 2017 Daniel Mendler, 2006-2007 Roman Leshchinskiy
 -- License     :  BSD-style (see the file LICENSE)
 --
--- Maintainer  :  Roman Leshchinskiy <rl@cse.unsw.edu.au>
+-- Maintainer  :  Daniel Mendler <mail@daniel-mendler.de>
 -- Stability   :  experimental
 -- Portability :  portable
 --

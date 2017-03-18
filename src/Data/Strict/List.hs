@@ -12,7 +12,7 @@
 -- Copyright   :  (c) 2017 Daniel Mendler
 -- License     :  BSD-style (see the file LICENSE)
 --
--- Maintainer  :  Roman Leshchinskiy <rl@cse.unsw.edu.au>
+-- Maintainer  :  Daniel Mendler <mail@daniel-mendler.de>
 -- Stability   :  experimental
 -- Portability :  portable
 --
