@@ -3,7 +3,7 @@
 {-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -48,7 +48,8 @@ import Data.Strict.Class
 data Maybe a = Nothing | Just !a
   deriving (Eq, Ord, Show, Read, Functor, Foldable, Traversable, Generic, Generic1, Data, Typeable)
 
-instance IsStrict (L.Maybe a) (Maybe a) where
+instance IsStrict (Maybe a) where
+  type Lazy (Maybe a) = (L.Maybe a)
   toStrict   L.Nothing  = Nothing
   toStrict   (L.Just x) = Just x
   fromStrict Nothing    = L.Nothing

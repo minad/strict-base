@@ -4,7 +4,7 @@
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -51,7 +51,8 @@ data Pair a b = !a :!: !b
 -- This gives a nicer syntax for the type but only works in GHC for now.
 type (:!:) = Pair
 
-instance IsStrict (a, b) (Pair a b) where
+instance IsStrict (Pair a b) where
+  type Lazy (Pair a b) = (a,b)
   toStrict   (a, b)    = a :!: b
   fromStrict (a :!: b) = (a, b)
 

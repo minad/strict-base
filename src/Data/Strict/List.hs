@@ -37,7 +37,8 @@ infixr 5 :!
 data List a = Nil | !a :! !(List a)
   deriving (Eq, Ord, Show, Read, Functor, Foldable, Traversable, Generic, Generic1, Data, Typeable)
 
-instance IsStrict [a] (List a) where
+instance IsStrict (List a) where
+  type Lazy (List a) = [a] 
   toStrict   = foldr (:!) Nil
   fromStrict = foldr (:) []
 
