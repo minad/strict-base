@@ -1,5 +1,4 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -20,9 +19,10 @@ module Data.Strict.Class (
   liftStrict
 ) where
 
-class IsStrict l s | l -> s, s -> l where
-  fromStrict :: s -> l
-  toStrict   :: l -> s
+class IsStrict s where
+  type Lazy s
+  fromStrict :: s -> Lazy s
+  toStrict   :: Lazy s -> s
 
-liftStrict :: IsStrict l s => (l -> l) -> (s -> s)
+liftStrict :: IsStrict s => (Lazy s -> Lazy s) -> (s -> s)
 liftStrict f = toStrict . f . fromStrict

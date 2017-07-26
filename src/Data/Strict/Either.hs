@@ -3,7 +3,7 @@
 {-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -40,7 +40,8 @@ import Data.Strict.Class
 data Either a b = Left !a | Right !b
   deriving (Eq, Ord, Read, Show, Functor, Traversable, Foldable, Generic, Generic1, Data, Typeable)
 
-instance IsStrict (L.Either a b) (Either a b) where
+instance IsStrict (Either a b) where
+  type Lazy (Either a b) = (L.Either a b)
   toStrict   (L.Left x)  = Left x
   toStrict   (L.Right y) = Right y
   fromStrict (Left x)    = L.Left x

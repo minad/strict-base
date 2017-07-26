@@ -4,7 +4,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -39,7 +38,8 @@ infixr 5 :|
 data NonEmpty a = !a :| !(List a)
   deriving (Eq, Ord, Show, Read, Functor, Foldable, Traversable, Generic, Generic1, Data, Typeable)
 
-instance IsStrict (L.NonEmpty a) (NonEmpty a) where
+instance IsStrict (NonEmpty a) where
+  type Lazy (NonEmpty a) = L.NonEmpty a
   toStrict   (a L.:| as) = a   :| toStrict as
   fromStrict (a   :| as) = a L.:| fromStrict as
 
